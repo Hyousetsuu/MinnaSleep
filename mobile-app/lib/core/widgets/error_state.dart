@@ -1,55 +1,77 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../theme/app_theme_extension.dart';
 import '../theme/app_typography.dart';
+import '../constants/app_messages.dart';
 import 'neo_button.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
-class ErrorState extends StatelessWidget {
-  final String message;
-  final VoidCallback? onRetry;
-  final bool isOffline;
+class NeoErrorState extends StatelessWidget {
+  final bool isNetworkError;
+  final VoidCallback onRetry;
 
-  const ErrorState({
+  const NeoErrorState({
     Key? key,
-    required this.message,
-    this.onRetry,
-    this.isOffline = false,
+    this.isNetworkError = false,
+    required this.onRetry,
   }) : super(key: key);
+
+  String _getRandomUnexpectedErrorTitle() {
+    final titles = [
+      AppMessages.unexpectedErrorTitle1,
+      AppMessages.unexpectedErrorTitle2,
+      AppMessages.unexpectedErrorTitle3,
+      AppMessages.unexpectedErrorTitle4,
+    ];
+    return titles[Random().nextInt(titles.length)];
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<NeoThemeExtension>()!;
+    final title = isNetworkError ? AppMessages.networkErrorTitle : _getRandomUnexpectedErrorTitle();
+    final body = isNetworkError ? AppMessages.networkErrorBody : AppMessages.unexpectedErrorBody;
 
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              isOffline ? '🔌' : '⚠️',
-              style: const TextStyle(fontSize: 80),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              isOffline ? 'No Internet Connection' : 'Oops, Something Went Wrong',
-              style: AppTypography.heading2.copyWith(color: theme.textPrimary),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              style: AppTypography.body.copyWith(color: theme.textSecondary),
-              textAlign: TextAlign.center,
-            ),
-            if (onRetry != null) ...[
+        child: Container(
+          padding: const EdgeInsets.all(32.0),
+          decoration: BoxDecoration(
+            color: theme.error,
+            border: Border.all(color: theme.border, width: 4),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [theme.defaultShadow],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isNetworkError ? LucideIcons.wifiOff : LucideIcons.bug,
+                size: 64,
+                color: Colors.white,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: AppTypography.heading2.copyWith(color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                body,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 32),
               NeoButton(
-                text: 'Retry',
-                onPressed: onRetry!,
-                isFullWidth: false,
+                text: 'TRY AGAIN',
+                onPressed: onRetry,
+                // backgroundColor: Colors.white,
+                // textColor: theme.error,
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

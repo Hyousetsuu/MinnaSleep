@@ -3,20 +3,20 @@ import '../theme/app_theme_extension.dart';
 import '../theme/app_typography.dart';
 import 'neo_button.dart';
 
-class EmptyState extends StatelessWidget {
+class NeoEmptyState extends StatelessWidget {
   final String title;
-  final String description;
-  final String? buttonText;
-  final VoidCallback? onButtonPressed;
-  final String? emoji;
+  final String message;
+  final IconData icon;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
-  const EmptyState({
+  const NeoEmptyState({
     Key? key,
     required this.title,
-    required this.description,
-    this.buttonText,
-    this.onButtonPressed,
-    this.emoji,
+    required this.message,
+    required this.icon,
+    this.actionLabel,
+    this.onAction,
   }) : super(key: key);
 
   @override
@@ -29,30 +29,33 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (emoji != null) ...[
-              Text(
-                emoji!,
-                style: const TextStyle(fontSize: 80),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.surface,
+                shape: BoxShape.circle,
+                border: Border.all(color: theme.border, width: 3),
+                boxShadow: [theme.defaultShadow],
               ),
-              const SizedBox(height: 24),
-            ],
+              child: Icon(icon, size: 48, color: theme.primary),
+            ),
+            const SizedBox(height: 32),
             Text(
               title,
+              textAlign: TextAlign.center,
               style: AppTypography.heading2.copyWith(color: theme.textPrimary),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
-              description,
-              style: AppTypography.body.copyWith(color: theme.textSecondary),
+              message,
               textAlign: TextAlign.center,
+              style: TextStyle(color: theme.textSecondary, fontSize: 16),
             ),
-            if (buttonText != null && onButtonPressed != null) ...[
+            if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 32),
               NeoButton(
-                text: buttonText!,
-                onPressed: onButtonPressed!,
-                isFullWidth: false,
+                text: actionLabel!,
+                onPressed: onAction!,
               ),
             ],
           ],

@@ -4,6 +4,7 @@ import '../../features/auth/presentation/providers/auth_state.dart';
 import 'route_paths.dart';
 import 'route_names.dart';
 import 'route_guard.dart';
+import '../theme/app_animations.dart';
 
 // Import Actual Screens
 import '../../features/auth/presentation/screens/splash_screen.dart';
@@ -73,12 +74,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.dashboard,
         name: RouteNames.dashboard,
-        builder: (context, state) => const MainLayout(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const MainLayout(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: AppAnimations.normal,
+        ),
       ),
       GoRoute(
-        path: '/active-sleep', // Missing from original paths, adding explicitly
+        path: '/active-sleep',
         name: 'activeSleep',
-        builder: (context, state) => const ActiveSleepScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const ActiveSleepScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          transitionDuration: AppAnimations.hero,
+        ),
       ),
       // ... more routes
     ],

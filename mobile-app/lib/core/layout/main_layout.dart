@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/widgets/neo_bottom_nav.dart';
-import '../../core/widgets/neo_button.dart';
+import '../../core/widgets/neo_animated_fab.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 // Screens
@@ -38,25 +38,12 @@ class _MainLayoutState extends State<MainLayout> {
         index: _currentIndex,
         children: _screens,
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: NeoAnimatedFAB(
+        label: 'START SLEEP',
+        icon: LucideIcons.moon,
         onPressed: () {
           context.push('/active-sleep');
         },
-        backgroundColor: theme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: theme.border, width: 3),
-        ),
-        elevation: 8,
-        label: const Text(
-          'START SLEEP',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.0,
-          ),
-        ),
-        icon: const Icon(LucideIcons.moon, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: NeoBottomNav(
