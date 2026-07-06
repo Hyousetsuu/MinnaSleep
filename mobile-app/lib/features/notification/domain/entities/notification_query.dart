@@ -1,3 +1,4 @@
+import 'notification_cursor.dart';
 import 'notification_enums.dart';
 
 class NotificationQuery {
@@ -6,8 +7,7 @@ class NotificationQuery {
   final NotificationStatus? status;
   final NotificationChannel? channel;
   final String? keyword; // Used for Search Index
-  final int limit;
-  final int offset;
+  final NotificationCursor cursor;
 
   const NotificationQuery({
     required this.userId,
@@ -15,7 +15,6 @@ class NotificationQuery {
     this.status,
     this.channel,
     this.keyword,
-    this.limit = 20,
-    this.offset = 0,
+    this.cursor = const NotificationCursor(),
   });
 }
