@@ -13,7 +13,7 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/verify_email_screen.dart';
 import '../../features/auth/presentation/screens/profile_setup_screen.dart';
-import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../layout/main_layout.dart';
 import '../../features/sleep_tracking/presentation/screens/active_sleep_screen.dart';
 
 // Placeholder for dashboard
@@ -73,7 +73,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.dashboard,
         name: RouteNames.dashboard,
-        builder: (context, state) => const DashboardScreen(),
+        builder: (context, state) => const MainLayout(),
       ),
       GoRoute(
         path: '/active-sleep', // Missing from original paths, adding explicitly
