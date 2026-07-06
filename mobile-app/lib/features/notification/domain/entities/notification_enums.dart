@@ -25,3 +25,21 @@ enum NotificationStatus {
   archived,
   deleted,
 }
+
+enum NotificationChannel {
+  local,
+  push,
+  inbox,
+  email,
+  sms,
+}
+
+enum NotificationAction {
+  openSleep,
+  openProfile,
+  openAchievement,
+  openPremium,
+  openSettings,
+  openCommunity,
+  none,
+}

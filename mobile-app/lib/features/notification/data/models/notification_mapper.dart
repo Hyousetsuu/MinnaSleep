@@ -12,8 +12,14 @@ class NotificationMapper {
       type: _typeFromString(dto.type),
       priority: _priorityFromString(dto.priority),
       status: _statusFromString(dto.status),
+      channel: _channelFromString(dto.channel),
+      action: _actionFromString(dto.action),
       payload: dto.payload,
+      metadata: dto.metadata,
       createdAt: DateTime.parse(dto.createdAt),
+      expiresAt: dto.expiresAt != null ? DateTime.parse(dto.expiresAt!) : null,
+      readAt: dto.readAt != null ? DateTime.parse(dto.readAt!) : null,
+      deletedAt: dto.deletedAt != null ? DateTime.parse(dto.deletedAt!) : null,
     );
   }
 
@@ -26,8 +32,14 @@ class NotificationMapper {
       type: entity.type.name,
       priority: entity.priority.name,
       status: entity.status.name,
+      channel: entity.channel.name,
+      action: entity.action.name,
       payload: entity.payload,
+      metadata: entity.metadata,
       createdAt: entity.createdAt.toIso8601String(),
+      expiresAt: entity.expiresAt?.toIso8601String(),
+      readAt: entity.readAt?.toIso8601String(),
+      deletedAt: entity.deletedAt?.toIso8601String(),
     );
   }
 
@@ -49,6 +61,20 @@ class NotificationMapper {
     return NotificationStatus.values.firstWhere(
       (e) => e.name == value,
       orElse: () => NotificationStatus.generated,
+    );
+  }
+
+  static NotificationChannel _channelFromString(String value) {
+    return NotificationChannel.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => NotificationChannel.inbox,
+    );
+  }
+
+  static NotificationAction _actionFromString(String value) {
+    return NotificationAction.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => NotificationAction.none,
     );
   }
 }

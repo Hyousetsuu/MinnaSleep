@@ -30,4 +30,26 @@ class SyncFailedEvent extends DomainEvent {
   SyncFailedEvent(this.reason);
 }
 
+// --- After-Persist Notification Events ---
+
+class NotificationPersistedEvent extends DomainEvent {
+  final String notificationId;
+  NotificationPersistedEvent(this.notificationId);
+}
+
+class NotificationReadEvent extends DomainEvent {
+  final String notificationId;
+  NotificationReadEvent(this.notificationId);
+}
+
+class NotificationArchivedEvent extends DomainEvent {
+  final String notificationId;
+  NotificationArchivedEvent(this.notificationId);
+}
+
+class NotificationDeletedEvent extends DomainEvent {
+  final String notificationId;
+  NotificationDeletedEvent(this.notificationId);
+}
+
 // Registry or Hub for listening to these events could be implemented here or via Riverpod

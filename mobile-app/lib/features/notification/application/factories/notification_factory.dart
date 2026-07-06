@@ -1,60 +1,32 @@
-import 'package:uuid/uuid.dart';
 import '../../domain/entities/notification_entity.dart';
-import '../../domain/entities/notification_enums.dart';
+import 'sleep_notification_factory.dart';
+import 'achievement_notification_factory.dart';
+import 'sync_notification_factory.dart';
+import 'premium_notification_factory.dart';
 
 class NotificationFactory {
-  static const Uuid _uuid = Uuid();
+  // Acts as a Façade for domain-specific notification factories
+
+  static Map<String, dynamic> _buildMetadata() {
+    return {
+      'generatedBy': 'NotificationFactory',
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+  }
 
   static NotificationEntity sleepCompleted(String userId, int minutes) {
-    return NotificationEntity(
-      id: _uuid.v4(),
-      userId: userId,
-      title: 'Sleep Session Completed',
-      body: 'You tracked $minutes minutes of sleep!',
-      type: NotificationType.sleep,
-      priority: NotificationPriority.critical,
-      status: NotificationStatus.generated,
-      createdAt: DateTime.now(),
-      payload: {'minutes': minutes},
-    );
+    return SleepNotificationFactory.createCompleted(userId, minutes, _buildMetadata());
   }
 
   static NotificationEntity badgeUnlocked(String userId, String badgeName) {
-    return NotificationEntity(
-      id: _uuid.v4(),
-      userId: userId,
-      title: 'Badge Unlocked! 🏅',
-      body: 'Congratulations, you earned the $badgeName badge.',
-      type: NotificationType.achievement,
-      priority: NotificationPriority.normal,
-      status: NotificationStatus.generated,
-      createdAt: DateTime.now(),
-    );
+    return AchievementNotificationFactory.createBadgeUnlocked(userId, badgeName, _buildMetadata());
   }
 
   static NotificationEntity syncFailed(String userId, String reason) {
-    return NotificationEntity(
-      id: _uuid.v4(),
-      userId: userId,
-      title: 'Sync Failed',
-      body: 'We could not sync your data: $reason',
-      type: NotificationType.syncFailed,
-      priority: NotificationPriority.high,
-      status: NotificationStatus.generated,
-      createdAt: DateTime.now(),
-    );
+    return SyncNotificationFactory.createFailed(userId, reason, _buildMetadata());
   }
 
   static NotificationEntity premiumExpired(String userId) {
-    return NotificationEntity(
-      id: _uuid.v4(),
-      userId: userId,
-      title: 'Premium Expired',
-      body: 'Your premium subscription has ended. Renew to keep your perks!',
-      type: NotificationType.premium,
-      priority: NotificationPriority.normal,
-      status: NotificationStatus.generated,
-      createdAt: DateTime.now(),
-    );
+    return PremiumNotificationFactory.createExpired(userId, _buildMetadata());
   }
 }
