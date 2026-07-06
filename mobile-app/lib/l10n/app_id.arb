@@ -1,0 +1,16 @@
+{
+  "@@locale": "id",
+  "app_name": "Minna Sleep",
+  "sleep_start": "Mulai Lacak Tidur",
+  "sleep_stop": "Hentikan Pelacakan",
+  "sleep_completed": "Tidur Selesai",
+  "notification_unread": "Notifikasi Belum Dibaca",
+  "notification_count": "{count, plural, =0{Tidak ada notifikasi} =1{1 notifikasi} other{{count} notifikasi}}",
+  "profile_level": "Level {level}",
+  "settings_theme": "Tema",
+  "settings_language": "Bahasa",
+  "settings_motion": "Kurangi Animasi",
+  "action_save": "Simpan",
+  "action_cancel": "Batal",
+  "error_generic": "Terjadi kesalahan. Silakan coba lagi."
+}

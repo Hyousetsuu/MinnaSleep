@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme_extension.dart';
 import '../theme/app_animations.dart';
+import '../theme/motion_policy.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class NeoAnimatedFAB extends StatefulWidget {
@@ -56,43 +57,63 @@ class _NeoAnimatedFABState extends State<NeoAnimatedFAB> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<NeoThemeExtension>()!;
+    final motionPolicy = MotionPolicy(context);
 
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Hero(
-          tag: 'start_sleep_fab',
-          flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
-            return ScaleTransition(scale: animation, child: toHeroContext.widget);
+    // If reduced motion is active, duration is automatically clamped to 100ms
+    _controller.duration = motionPolicy.effectiveDuration;
+
+    return Semantics(
+      button: true,
+      label: widget.label,
+      hint: "Double tap to activate",
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        child: motionPolicy.buildTransition(
+          child: _buildFabBody(theme),
+          normalBuilder: (context, child) {
+            // Only perform Hero and Scale transitions if motion is normal
+            return ScaleTransition(
+              scale: _scaleAnimation,
+              child: Hero(
+                tag: 'start_sleep_fab',
+                flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {
+                  return ScaleTransition(scale: animation, child: toHeroContext.widget);
+                },
+                child: child,
+              ),
+            );
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            decoration: BoxDecoration(
-              color: theme.primary,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.border, width: 3),
-              boxShadow: [theme.defaultShadow],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(widget.icon, color: Colors.white),
-                const SizedBox(width: 8),
-                Text(
-                  widget.label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFabBody(NeoThemeExtension theme) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 48.0, minWidth: 48.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        color: theme.primary,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.border, width: 3),
+        boxShadow: [theme.defaultShadow],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ExcludeSemantics(child: Icon(widget.icon, color: Colors.white)),
+          const SizedBox(width: 8),
+          Text(
+            widget.label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.0,
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -1,0 +1,30 @@
+{
+  "@@locale": "en",
+  "app_name": "Minna Sleep",
+  "sleep_start": "Start Sleep Tracking",
+  "sleep_stop": "Stop Tracking",
+  "sleep_completed": "Sleep Completed",
+  "notification_unread": "Unread Notification",
+  "notification_count": "{count, plural, =0{No notifications} =1{1 notification} other{{count} notifications}}",
+  "@notification_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profile_level": "Level {level}",
+  "@profile_level": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_theme": "Theme",
+  "settings_language": "Language",
+  "settings_motion": "Reduce Motion",
+  "action_save": "Save",
+  "action_cancel": "Cancel",
+  "error_generic": "Something went wrong. Please try again."
+}

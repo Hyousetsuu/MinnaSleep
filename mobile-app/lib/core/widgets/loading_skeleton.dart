@@ -43,23 +43,26 @@ class _LoadingSkeletonState extends State<LoadingSkeleton> with SingleTickerProv
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<NeoThemeExtension>()!;
 
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Container(
-          width: widget.width,
-          height: widget.height,
-          decoration: BoxDecoration(
-            color: theme.surface.withOpacity(_animation.value),
-            borderRadius: widget.borderRadius ?? AppRadius.borderMd,
-            // Add a subtle border for neo brutalism feel even in loading
-            border: Border.all(
-              color: theme.border.withOpacity(0.1),
-              width: 1,
+    return Semantics(
+      label: "Loading content",
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              color: theme.surface.withOpacity(_animation.value),
+              borderRadius: widget.borderRadius ?? AppRadius.borderMd,
+              // Add a subtle border for neo brutalism feel even in loading
+              border: Border.all(
+                color: theme.border.withOpacity(0.1),
+                width: 1,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
