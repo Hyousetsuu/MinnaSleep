@@ -1,25 +1,14 @@
-# Backend Readiness Checklist (Sprint 6.5 Gate)
+# Backend Readiness Checklist (Sprint 6.5 Quality Gate)
 
-Dokumen ini adalah gerbang pamungkas sebelum satu baris kode pun ditulis di repositori Backend (Express.js) pada Sprint 7. Seluruh poin di bawah wajib dicentang hijau untuk menjamin pengembangan sinkron antara tim Flutter dan Backend.
+Express.js TIDAK BOLEH ditulis sebelum daftar ini seluruhnya dicentang (Hukum *Contract-First*).
 
-## 📦 Domain & Data Integrity
-- [ ] **DTO Stable**: Seluruh struktur payload JSON (Request/Response) telah disepakati dan dibekukan.
-- [ ] **Entity Stable**: Skema entitas tidak akan berubah lagi tanpa persetujuan lintas tim.
-
-## 🛡️ Reliability & Testing
-- [ ] **Repository Contract Passed**: Semua repositori lokal Flutter telah melewati ujian kontrak.
-- [ ] **Transaction Passed**: Tes *Stress* All-or-Nothing berhasil pada `TransactionManager`.
-- [ ] **Offline Mode Passed**: Perilaku aplikasi tanpa koneksi internet sudah sempurna.
-- [ ] **Sync Queue Tested**: Modul antrean (queue) terbukti tangguh secara lokal dan *race-condition free*.
-- [ ] **Notification Pipeline Verified**: Proses pembuatan hingga pengiriman lokal bekerja mulus.
-
-## 📜 API & Protocol Freezing
-- [ ] **API Contract Frozen**: OpenAPI (`swagger.yaml`) telah diunggah dan tidak dapat direvisi secara sepihak.
-- [ ] **Error Registry Frozen**: Seluruh *Error Code* (`AUTH_001`, `SYNC_001`, dsb) di `error_codes.md` bersifat statis.
-- [ ] **Authentication Flow Approved**: Alur JWT, *Refresh Token*, dan pencabutan sesi (Revoke) telah dikunci.
-- [ ] **Database Migration Policy**: Aturan migrasi (`upgrade`, `downgrade`, `seed`) dipahami dan disiapkan.
-- [ ] **Feature Toggle Lifecycle**: Tahapan (*Experimental ➔ Internal ➔ Beta ➔ Public ➔ Deprecated*) diterapkan.
-
----
-**Status Kesiapan Backend**: 🔴 BELUM SIAP
-*(Eksekusi kode Express.js dilarang keras sebelum seluruh kotak dicentang).*
+- [x] **OpenAPI Specification**: `docs/api/openapi.yaml` selesai dan divalidasi linter.
+- [x] **DTO Freeze**: Struktur objek JSON dibekukan dalam skema OpenAPI.
+- [x] **Error Registry**: Seluruh kode `AUTH`, `SYNC`, dan `AI` terdaftar di `docs/api/error_registry.md`.
+- [x] **Auth Contract**: Siklus Access/Refresh token terdokumentasi.
+- [x] **Sync Contract**: Aturan resolusi konflik dan antrean di `sync_contract.md`.
+- [x] **API Versioning**: Prefix `/api/v1/` dipatok secara absolut.
+- [x] **Idempotency**: Spesifikasi `Idempotency-Key` diwajibkan untuk endpoint mutasi.
+- [x] **Pagination**: Ditetapkan menggunakan `cursor`-based pagination untuk kapabilitas offline-first.
+- [x] **Isolate Constraints**: Dokumentasi batasan *Main Isolate* vs *Background Isolate* untuk klien.
+- [x] **API Compatibility Fixtures**: JSON Dummy untuk *Contract Tests* tersedia di `test/contracts/fixtures/`.

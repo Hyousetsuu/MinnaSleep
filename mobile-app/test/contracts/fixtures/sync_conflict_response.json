@@ -1,0 +1,15 @@
+{
+  "error_code": "SYNC001",
+  "conflict": {
+    "entity": "sleep",
+    "localVersion": 12,
+    "remoteVersion": 15,
+    "resolution": "last_write_wins",
+    "serverState": {
+      "id": "sleep_123",
+      "durationMinutes": 480,
+      "qualityScore": 90,
+      "updatedAt": "2026-07-06T12:00:00Z"
+    }
+  }
+}

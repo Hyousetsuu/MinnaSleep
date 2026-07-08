@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "provider": "gemini",
+  "promptVersion": 3,
+  "model": "gemini-2.5-flash",
+  "safety": "passed",
+  "generatedAt": "2026-07-07T12:00:00Z",
+  "summary": "Your REM sleep was phenomenal today.",
+  "sleepScore": 88,
+  "suggestions": [
+    "Keep the room dark",
+    "Maintain this schedule"
+  ],
+  "confidence": 0.95
+}

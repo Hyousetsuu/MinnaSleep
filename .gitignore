@@ -20,3 +20,11 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Keys & Certificates
+*.pem
+*.key
+keys/
+secrets/
+.certificates/
+backend-api/keys/

@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: Minna Sleep API
+  version: 1.0.0
+  description: The Single Source of Truth for the Minna Sleep Offline-First Backend API.
+
+servers:
+  - url: https://api.minnasleep.com/api/v1
+    description: Production Server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login via Provider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /sync:
+    post:
+      summary: Synchronize offline data
+      description: Push local queue and receive server updates.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncPayload'
+      responses:
+        '200':
+          description: Sync successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResponse'
+        '409':
+          description: Conflict detected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictPayload'
+
+  /ai/insights/sleep:
+    post:
+      summary: Generate Sleep Insight
+      description: Proxies request to Gemini API returning forced JSON.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SleepEntity'
+      responses:
+        '200':
+          description: AI generated insight
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIInsightResponse'
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        provider:
+          type: string
+        token:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+    SyncPayload:
+      type: object
+      properties:
+        queue:
+          type: array
+          items:
+            type: object
+        lastSyncedAt:
+          type: string
+          format: date-time
+    SyncResponse:
+      type: object
+      properties:
+        updates:
+          type: array
+          items:
+            type: object
+    ConflictPayload:
+      type: object
+      properties:
+        entity:
+          type: string
+        localVersion:
+          type: integer
+        remoteVersion:
+          type: integer
+        resolution:
+          type: string
+    SleepEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        durationMinutes:
+          type: integer
+        qualityScore:
+          type: integer
+    AIInsightResponse:
+      type: object
+      properties:
+        schemaVersion:
+          type: integer
+          example: 1
+        promptVersion:
+          type: integer
+          example: 3
+        model:
+          type: string
+          example: "gemini-2.5-flash"
+        safety:
+          type: string
+          example: "passed"
+        generatedAt:
+          type: string
+          format: date-time
+        summary:
+          type: string
+        score:
+          type: integer
+        suggestions:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number

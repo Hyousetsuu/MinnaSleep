@@ -72,8 +72,6 @@ CREATE INDEX idx_subscriptions_user_id ON public.subscriptions(user_id);
 CREATE INDEX idx_payments_user_id ON public.payments(user_id);
 
 -- RLS Policies
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.sleep_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 

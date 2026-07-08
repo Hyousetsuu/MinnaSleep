@@ -1,0 +1,17 @@
+node_modules
+dist
+coverage
+build
+
+# Keep environment variables out of version control
+.env
+.env.production
+.env.development
+
+# Keys & Certificates
+keys/
+secrets/
+*.pem
+*.key
+
+/src/generated/prisma

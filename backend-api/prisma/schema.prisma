@@ -1,0 +1,253 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------
+// AUTHENTICATION & SECURITY
+// -----------------------------------------
+
+model User {
+  id           String @id @default(uuid())
+  email        String @unique
+  passwordHash String
+  role         String @default("user")
+
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+
+  sessions UserSession[]
+  profile  Profile?
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  version      Int           @default(1)
+  subscription Subscription?
+}
+
+model UserSession {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  refreshTokenHash String  @unique
+  parentTokenId    String? // For reuse detection
+  rotatedFrom      String? // Previous token id
+
+  deviceId    String
+  deviceName  String?
+  deviceModel String?
+  os          String?
+  browser     String?
+  platform    String?
+  ipAddress   String?
+  userAgent   String?
+
+  expiresAt     DateTime
+  lastUsedAt    DateTime  @default(now())
+  revokedAt     DateTime?
+  revokedReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  version   Int      @default(1)
+
+  @@index([userId, deviceId])
+}
+
+// -----------------------------------------
+// DOMAIN MODELS
+// -----------------------------------------
+
+model Profile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  username  String  @unique
+  avatarUrl String?
+  level     Int     @default(1)
+  currentXp Int     @default(0)
+
+  sleepSessions Sleep[]
+  notifications Notification[]
+  aiUsage       AIUsage?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+}
+
+model Sleep {
+  id        String  @id @default(uuid())
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  startedAt  DateTime
+  endedAt    DateTime?
+  duration   Int? // In minutes
+  quality    Int? // Score 0-100
+  syncStatus String    @default("PENDING")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+
+  @@index([profileId, startedAt])
+}
+
+model Notification {
+  id        String  @id @default(uuid())
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  type     String
+  priority String
+  status   String @default("UNREAD")
+  metadata Json?
+
+  readAt DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  version   Int       @default(1)
+
+  @@index([profileId, status])
+}
+
+// -----------------------------------------
+// OBSERVABILITY & OFFLINE INFRASTRUCTURE
+// -----------------------------------------
+
+model AuditLog {
+  id          String  @id @default(uuid())
+  actorUserId String?
+  actorType   String?
+  action      String
+  resource    String?
+  resourceId  String?
+  requestId   String?
+
+  ipAddress String?
+  userAgent String?
+  deviceId  String?
+  country   String?
+  city      String?
+
+  metadata Json?
+  before   Json?
+  after    Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([actorUserId, action])
+  @@index([createdAt])
+}
+
+model IdempotencyKey {
+  id             String  @id @default(uuid())
+  key            String  @unique
+  userId         String?
+  endpoint       String
+  requestHash    String?
+  responseStatus Int?
+  responseBody   Json?
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([key, userId])
+}
+
+model SyncQueue {
+  id        String @id @default(uuid())
+  userId    String
+  entity    String
+  operation String // CREATE, UPDATE, DELETE
+  payload   Json
+  status    String @default("PENDING")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status])
+}
+
+model AIUsage {
+  id        String  @id @default(uuid())
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  dailyUsed    Int @default(0)
+  monthlyUsed  Int @default(0)
+  lifetimeUsed Int @default(0)
+
+  quotaDaily   Int @default(5)
+  quotaMonthly Int @default(150)
+
+  resetAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  version   Int      @default(1)
+}
+
+model AICache {
+  hash     String @id
+  provider String
+  response Json
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+model Subscription {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan              String // e.g. 'premium', 'pro'
+  status            String  @default("CREATED") // CREATED, PENDING, AUTHORIZED, CAPTURED, ACTIVE, EXPIRED, CANCELLED, REFUNDED
+  provider          String // e.g. 'stripe'
+  providerReference String? @unique
+
+  startedAt   DateTime?
+  expiresAt   DateTime?
+  renewalAt   DateTime?
+  cancelledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  version   Int      @default(1)
+
+  @@index([status, expiresAt])
+}
+
+model OutboxEvent {
+  id            String @id @default(uuid())
+  aggregateId   String
+  aggregateType String
+  eventType     String
+  eventVersion  String @default("v1")
+  payload       Json
+
+  status     String @default("PENDING") // PENDING, PROCESSING, COMPLETED, RETRY, FAILED
+  retryCount Int    @default(0)
+
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+
+  @@index([status, createdAt])
+}
